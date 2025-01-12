@@ -24,10 +24,20 @@ mongoose
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+const allowedOrigins = [
+  'http://localhost:5173',  
+  'https://ecommerce-server-one-psi.vercel.app'
+];
 app.use(
   cors({
-    origin: "*",
+  origin: function(origin, callback) {
+    // Check if the incoming request's origin is in the allowedOrigins list
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);  // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS'), false);  // Block the request
+    }
+  },
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
